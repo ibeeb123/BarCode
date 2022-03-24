@@ -29,6 +29,7 @@ if cap.isOpened():
             ret, c = cap.read()
             d = c.copy              # 프레임 형식 복사 저장        
        
+       
             if not ret:
                 break        
        
@@ -55,17 +56,19 @@ if cap.isOpened():
             # 영상에서 1인 부분의 갯수를 셈
             diff_cnt = cv2.countNonZero(diff)
         
-            if diff_cnt > diff_max:
+            if diff_cnt > diff_max:         # 움직임 감지가 되었을때 
                 arr.append(c)       
                 print(diff_cnt)              
                                                      
-                if len(arr) >= 5:                 
+                if len(arr) >= 5:           # 움직임 감지가 5번이상 되었을때               
                     d = arr[centervalue]
                     shotcheck = cv2.imwrite("uploads/screenshot.jpg", d)
                     image = open("/home/pi/hee/uploads/screenshot.jpg",'rb')
 
                     files = {'test_image':image}
+                    # 서버에 데이터 전송
                     res =requests.post('http://gowoong.com:4000/upload/single', files = files)
+                    # 데이터 삭제 
                     os.remove("/home/pi/hee/uploads/screenshot.jpg")
                     arr =[]
                     print("배열 초기화")                       
